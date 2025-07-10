@@ -21,7 +21,7 @@ public struct HourAndMinutePicker: View {
     
     var division: MinuteDivision
     
-    init(
+    public init(
         hour: Binding<Int>,
         minute: Binding<Int>,
         division: MinuteDivision = .by5Minute
