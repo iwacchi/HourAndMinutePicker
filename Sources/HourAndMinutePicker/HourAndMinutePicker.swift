@@ -33,7 +33,7 @@ public struct HourAndMinutePicker: View {
     
     public var body: some View {
         ZStack {
-            HourAndMinutePicker(
+            HourAndMinutePickerUIView(
                 hour: $hour,
                 minute: $minute,
                 division: division

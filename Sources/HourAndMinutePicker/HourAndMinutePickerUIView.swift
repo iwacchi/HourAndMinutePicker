@@ -20,7 +20,7 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
     
     var division: MinuteDivision
     
-    init(
+    internal init(
         hour: Binding<Int>,
         minute: Binding<Int>,
         division: MinuteDivision
@@ -135,7 +135,7 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
         
     }
     
-    private static func getMinutes(division: MinuteDivision) -> [Int] {
+    internal static func getMinutes(division: MinuteDivision) -> [Int] {
         Array
             .init(repeating: 0 ... (60 / division.value) - 1, count: 100)
             .flatMap { $0 }
