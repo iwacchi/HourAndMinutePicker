@@ -21,14 +21,18 @@ public struct HourAndMinutePicker: View {
     
     var division: MinuteDivision
     
+    var isMinuteRoundUp: Bool
+    
     public init(
         hour: Binding<Int>,
         minute: Binding<Int>,
-        division: MinuteDivision = .by5Minute
+        division: MinuteDivision = .by5Minute,
+        isMinuteRoundUp: Bool = true
     ) {
         self._hour = hour
         self._minute = minute
         self.division = division
+        self.isMinuteRoundUp = isMinuteRoundUp
     }
     
     public var body: some View {
@@ -36,7 +40,8 @@ public struct HourAndMinutePicker: View {
             HourAndMinutePickerUIView(
                 hour: $hour,
                 minute: $minute,
-                division: division
+                division: division,
+                isMinuteRoundUp: isMinuteRoundUp
             )
             Text(":")
                 .fontWeight(.bold)

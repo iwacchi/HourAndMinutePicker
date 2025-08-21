@@ -20,19 +20,23 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
     
     var division: MinuteDivision
     
+    var isMinuteRoundUp: Bool
+    
     internal init(
         hour: Binding<Int>,
         minute: Binding<Int>,
-        division: MinuteDivision
+        division: MinuteDivision,
+        isMinuteRoundUp: Bool
     ) {
         self._hour = hour
         self._minute = minute
         self.division = division
+        self.isMinuteRoundUp = isMinuteRoundUp
     }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(
-            hourSelection: hour, minuteSelection: minute, division: division
+            parent: self, division: division
         )
     }
     
@@ -42,8 +46,14 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
         pickerView.delegate = context.coordinator
         pickerView.dataSource = context.coordinator
         pickerView.selectRow(24 * 50 + hour, inComponent: 0, animated: false)
+        var minute = (60 / division.value) * 50 + minute / division.value
+        if isMinuteRoundUp {
+            minute = minute + 1
+            let minutes: [Int] = HourAndMinutePickerUIView.getMinutes(division: division)
+            self.minute = minutes[minute]
+        }
         pickerView.selectRow(
-            (60 / division.value) * 50 + minute / division.value,
+            minute,
             inComponent: 1,
             animated: false
         )
@@ -77,9 +87,7 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
     
     final class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         
-        var hourSelection: Int
-        
-        var minuteSelection: Int
+        var parent: HourAndMinutePickerUIView
         
         let hours: [Int]
         
@@ -88,12 +96,10 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
         var minutes: [Int]
         
         init(
-            hourSelection: Int,
-            minuteSelection: Int,
+            parent: HourAndMinutePickerUIView,
             division: MinuteDivision
         ) {
-            self.hourSelection = hourSelection
-            self.minuteSelection = minuteSelection
+            self.parent = parent
             self.hours = Array.init(repeating: 0 ... 23, count: 100).flatMap { $0 }
             self.division = division
             let minutes: [Int] = HourAndMinutePickerUIView.getMinutes(division: division)
@@ -115,8 +121,8 @@ internal struct HourAndMinutePickerUIView: UIViewRepresentable {
         func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
             let selectedHour: Int = hours[pickerView.selectedRow(inComponent: 0)]
             let selectedMinute: Int = minutes[pickerView.selectedRow(inComponent: 1)]
-            hourSelection = selectedHour
-            minuteSelection = selectedMinute
+            parent.hour = selectedHour
+            parent.minute = selectedMinute
             pickerView.reloadComponent(1)
         }
         
